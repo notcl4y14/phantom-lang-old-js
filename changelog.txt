@@ -7,6 +7,11 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 3/1/2024
+- Created Token.js
+- Created utils folder
+    + tools.js
+
 // 20/12/2023
 - Initial release
 - Created main.js
