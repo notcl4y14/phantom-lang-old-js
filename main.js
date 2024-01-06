@@ -1,13 +1,10 @@
-let Token = require("./lang/Token.js");
+let Lexer = require("./lang/Lexer.js");
 
 let main = function() {
-	let token1 = new Token("String", "Hello World!");
-	let token2 = new Token("Number", 0.5);
+	let lexer = new Lexer("<stdin>", "+-*/%^ += -= *= /= %= ^= < > = .,:;!&|");
+	let tokens = lexer.lexerize();
 
-	console.log(token1);
-	console.log(token2);
-	console.log(token1.string());
-	console.log(token2.string());
+	tokens.forEach ((token) => console.log(token.string()));
 }
 
 main();

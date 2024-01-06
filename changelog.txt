@@ -7,10 +7,22 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 6/1/2024
+- Created Lexer.js
+- Added tokens
+	+ Operator
+	+ Dot
+	+ Comma
+	+ Colon
+	+ Semicolon
+	+ Not
+	+ Ampersand
+	+ Pipe
+
 // 3/1/2024
 - Created Token.js
 - Created utils folder
-    + tools.js
+	+ tools.js
 
 // 20/12/2023
 - Initial release
