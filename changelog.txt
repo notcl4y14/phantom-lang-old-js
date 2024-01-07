@@ -7,6 +7,17 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 7/1/2024
+- Added tokens
+    + Number
+    + String
+    + Identifier
+    + Keyword
+    + Literal
+    + Paren
+    + Bracket
+    + Brace
+
 // 6/1/2024
 - Created Lexer.js
 - Added tokens

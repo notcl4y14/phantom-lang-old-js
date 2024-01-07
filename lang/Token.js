@@ -25,9 +25,31 @@ let Token = class {
 		Ampersand: 11,
 		Pipe: 12,
 
-		Comment: 13,
-		EOF: 14,
+		Paren: 13,
+		Bracket: 14,
+		Brace: 15,
+
+		Comment: 16,
+		EOF: 17,
 	};
+
+	static IdentifierBreak = " \t\r\n+-*/%^<>=.,:;!&|()[]{}\"'`";
+	static Keywords = [
+		"let",
+		"var",
+		"if",
+		"else",
+		"for",
+		"while",
+		"function",
+		"return",
+	];
+	static Literals = [
+		"undefined",
+		"null",
+		"true",
+		"false"
+	];
 
 	// ---------------------------------------------------------------
 
