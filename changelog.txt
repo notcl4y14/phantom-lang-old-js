@@ -7,6 +7,15 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 8/1/2024
+- Now the language reads and interprets files
+- Added "--lexer" argument
+- Created "tests" folder
+    + x_plus_y.pht
+    + threading.pht
+    + test.pht
+- Fixed lexer skipping a character after lexerizing identifier
+
 // 7/1/2024
 - Added tokens
     + Number

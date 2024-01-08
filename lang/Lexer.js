@@ -128,6 +128,8 @@ let Lexer = class {
 			this.advance();
 		}
 
+		this.advance(-1);
+
 		if (Token.Keywords.includes(identStr)) {
 			return new Token(Token.Type.Keyword, identStr);
 

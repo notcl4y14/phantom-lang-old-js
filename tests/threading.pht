@@ -1,0 +1,19 @@
+// Synchronous function
+let thread = function() {
+	let i = -1;
+
+	while (i++ < 5) log.writeln(i);
+}
+
+// Calling asynchronously
+async thread();
+
+// Asynchronous function
+let asyncThread = async function() {
+	let i = -1;
+
+	while (i++ < 5) log.writeln(i);
+}
+
+// Calling synchronously
+await thread();
