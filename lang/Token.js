@@ -53,7 +53,11 @@ let Token = class {
 
 	// ---------------------------------------------------------------
 
-	matches (type, value) { return this.type == type && this.value == value; }
+	matches (type, value = null, includes = false) {
+		if (includes) return this.type == type && value.includes(this.value);
+		return this.type == type && this.value == value;
+	}
+
 	string () { return Tools_toObject("Token", { type: this.type, value: this.value }); }
 }
 

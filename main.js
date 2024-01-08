@@ -1,7 +1,9 @@
 let fs = require("fs");
+let util = require("util");
 let Lexer = require("./lang/Lexer.js");
+let Parser = require("./lang/Parser.js");
 
-let valid_args = ["--lexer"];
+let valid_args = ["--lexer", "--parser"];
 let param_args = [];
 
 // TODO: Make this cleaner and cleaner to use. Also probably optimize :/
@@ -57,6 +59,14 @@ let run = function(filename, code, flags) {
 	if (flags["--lexer"])
 	{
 		tokens.forEach ((token) => console.log(token.string()));
+	}
+
+	let parser = new Parser(filename, tokens);
+	let ast = parser.parse();
+
+	if (flags["--parser"])
+	{
+		console.log( util.inspect(ast, { colors: true, hidden: false, depth: null }) );
 	}
 }
 
