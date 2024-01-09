@@ -7,8 +7,14 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 9/1/2024
+- Created Interpreter.js
+- Created Node.js
+- Added "--last-eval" argument
+
 // 8/1/2024
 - Created Parser.js
+- Added "--parser" argument
 ----
 - Now the language reads and interprets files
 - Added "--lexer" argument

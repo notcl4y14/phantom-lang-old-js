@@ -1,4 +1,5 @@
 let Token = require("./Token.js");
+let Node = require("./Node.js");
 
 let Parser = class {
 	constructor(filename, tokens) {
@@ -28,10 +29,7 @@ let Parser = class {
 	// ---------------------------------------------------------------
 
 	parse() {
-		let program = {
-			type: "Program",
-			body: [],
-		};
+		let program = new Node( Node.Type.Program, { body: [] } );
 
 		while (!this.isEOF()) {
 			let expr = this.parse_Expr();
@@ -65,10 +63,7 @@ let Parser = class {
 			let operator = this.advance().value;
 			let right = func.call(this);
 
-			return {
-				type: "BinaryExpr",
-				left, operator, right,
-			};
+			return new Node( Node.Type.BinaryExpr, { left, operator, right, } );
 		}
 
 		return left;
@@ -80,7 +75,9 @@ let Parser = class {
 		let token = this.advance();
 
 		switch (token.type) {
-			case Token.Type.Number: return { type: "Number", value: token.value };
+			case Token.Type.Number: return new Node( Node.Type.Number, { value: token.value } );
+			case Token.Type.String: return new Node( Node.Type.String, { value: token.value } );
+			case Token.Type.Literal: return new Node( Node.Type.Literal, { value: token.value } );
 		}
 	}
 }
