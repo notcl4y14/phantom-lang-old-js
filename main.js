@@ -81,13 +81,17 @@ let run = function(filename, code, flags) {
 	let parser = new Parser(filename, tokens);
 	let ast = parser.parse();
 
+	if (ast.error) {
+		return console.log( ast.error.string() );
+	}
+
 	if (flags["--parser"]) {
-		console.log( util.inspect(ast, { colors: true, hidden: false, depth: null }) );
+		console.log( util.inspect(ast.value, { colors: true, hidden: false, depth: null }) );
 	}
 
 	// Interpreter
 	let interpreter = new Interpreter(filename);
-	let lastEval = interpreter.eval_Primary(ast);
+	let lastEval = interpreter.eval_Primary(ast.value);
 
 	if (flags["--last-eval"]) {
 		console.log(lastEval);

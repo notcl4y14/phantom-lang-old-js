@@ -7,6 +7,12 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 10/1/2024
+- Created Result.js
+- Created Position.js
+- Created Error.js
+- Added power (^) and multiplicand (**) operators to parser and interpreter
+
 // 9/1/2024
 - Created Interpreter.js
 - Created Node.js

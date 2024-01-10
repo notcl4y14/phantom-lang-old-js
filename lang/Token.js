@@ -4,6 +4,7 @@ let Token = class {
 	constructor (type, value = null) {
 		this.type = type;
 		this.value = value;
+		this.pos = [];
 	}
 
 	// ---------------------------------------------------------------
@@ -33,6 +34,12 @@ let Token = class {
 		EOF: 17,
 	};
 
+	static MultiCharOp = ["**", "+=", "-=", "*=", "/=", "%=", "^=", "<=", ">=", "==", "!="];
+	static ThreeCharOp = ["**="];
+	static Op = "+-*/%^<>=";
+	static Symbols = ".,:;!&|()[]{}";
+	static Digits = "1234567890";
+	static Quotes = "\"'`";
 	static IdentifierBreak = " \t\r\n+-*/%^<>=.,:;!&|()[]{}\"'`";
 	static Keywords = [
 		"let",
@@ -50,6 +57,14 @@ let Token = class {
 		"true",
 		"false"
 	];
+
+	// ---------------------------------------------------------------
+
+	setPosition(left, right) { this.pos = [left, right]; return this; }
+
+	getPos() { return this.pos; }
+	getType() { return this.type; }
+	getValue() { return this.value; }
 
 	// ---------------------------------------------------------------
 

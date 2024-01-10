@@ -1,10 +1,11 @@
+let Position = require("./Position.js");
 let Token = require("./Token.js");
 
 let Lexer = class {
 	constructor(filename, code) {
 		this.filename = filename;
 		this.code = code;
-		this.position = -1;
+		this.pos = new Position(-1, 0, -1);
 
 		this.advance();
 	}
@@ -13,13 +14,23 @@ let Lexer = class {
 
 	getFilename() { return this.filename; }
 	getCode() { return this.code; }
-	getPosition() { return this.position; }
+	getPos() { return this.pos; }
 
 	// ---------------------------------------------------------------
 
-	at(range = 0) { return range == 0 ? this.getCode()[this.getPosition()] : this.getCode().substr(this.getPosition(), range); }
-	advance (delta = 1) { this.position += delta; }
-	isEOF() { return this.getPosition() >= this.getCode().length; }
+	at(range = 0) {
+		return range == 0
+			? this.getCode()[ this.getPos().index ]
+			: this.getCode().substr( this.getPos().index, range );
+	}
+
+	advance (delta = 1) {
+		this.pos.advance ( this.at(), delta );
+	}
+
+	isEOF() {
+		return this.getPos().index >= this.getCode().length;
+	}
 
 	// ---------------------------------------------------------------
 
@@ -27,9 +38,27 @@ let Lexer = class {
 		let tokens = [];
 
 		while ( !this.isEOF() ) {
+
+			// Getting left pos and token
+			let pos = this.getPos().clone();
 			let token = this.lexerize_Token();
+
+			if (!token) {
+				this.advance();
+				continue;
+			}
+
+			// Checking for positions
+			if (!token.pos[0])
+				token.pos[0] = pos;
+
+			if (!token.pos[1])
+				token.pos[1] = pos.clone().advance();
+
+			// Pushing
 			if (token) tokens.push(token);
 			this.advance();
+
 		}
 
 		tokens.push ( new Token(Token.Type.EOF) );
@@ -43,17 +72,22 @@ let Lexer = class {
 		if ( (" \t\r\n").includes(this.at()) ) {
 			return;
 
-		} else if ( ["+=", "-=", "*=", "/=", "%=", "^=", "<=", ">=", "==", "!="].includes(this.at(2)) ) {
+		} else if ( Token.ThreeCharOp.includes(this.at(3)) ) {
+			let value = this.at(3);
+			this.advance(2);
+			return new Token (Token.Type.Operator, value);
+
+		} else if ( Token.MultiCharOp.includes(this.at(2)) ) {
 			let value = this.at(2);
 			this.advance();
 			return new Token (Token.Type.Operator, value);
 
 		// ----------------------------------------------------------
 
-		} else if ( ("+-*/%^<>=").includes(char) ) {
+		} else if ( Token.Op.includes(char) ) {
 			return new Token (Token.Type.Operator, char);
 
-		} else if ( (".,:;!&|()[]{}").includes(char) ) {
+		} else if ( Token.Symbols.includes(char) ) {
 			switch (char) {
 				case ".": return new Token (Token.Type.Dot);
 				case ",": return new Token (Token.Type.Comma);
@@ -73,22 +107,25 @@ let Lexer = class {
 
 		// ----------------------------------------------------------
 
-		} else if ( ("1234567890").includes(char) ) {
+		} else if ( Token.Digits.includes(char) ) {
 			return this.lexerize_Number();
 
-		} else if ( ("\"'`").includes(char) ) {
+		} else if ( Token.Quotes.includes(char) ) {
 			return this.lexerize_String();
 
 		} else {
 			return this.lexerize_Identifier();
 		}
 
-		return null;
+		return;
 	}
 
 	lexerize_Number() {
+		let leftPos = this.pos.clone();
 		let numStr = "";
 		let dot = false;
+
+		// ---------------------------
 
 		while (!this.isEOF() && ("1234567890.").includes(this.at())) {
 			numStr += this.at();
@@ -101,43 +138,70 @@ let Lexer = class {
 			this.advance();
 		}
 
+		// ---------------------------
+
+		let rightPos = this.pos.clone();
 		this.advance(-1);
 
-		return new Token(Token.Type.Number, Number(numStr));
+		// ---------------------------
+
+		return new Token(Token.Type.Number, Number(numStr))
+			.setPosition(leftPos, rightPos);
 	}
 
 	lexerize_String() {
+		let leftPos = this.pos.clone();
 		let quote = this.at();
 		let str = "";
 
 		this.advance();
+
+		// ---------------------------
 
 		while (!this.isEOF() && this.at() != quote) {
 			str += this.at();
 			this.advance();
 		}
 
-		return new Token(Token.Type.String, str);
+		// ---------------------------
+
+		let rightPos = this.pos.clone();
+
+		// ---------------------------
+
+		return new Token(Token.Type.String, str)
+			.setPosition(leftPos, rightPos);
 	}
 
 	lexerize_Identifier() {
+		let leftPos = this.pos.clone();
 		let identStr = "";
+
+		// ---------------------------
 
 		while (!this.isEOF() && !Token.IdentifierBreak.includes(this.at()) ) {
 			identStr += this.at();
 			this.advance();
 		}
 
+		// ---------------------------
+
+		let rightPos = this.pos.clone();
 		this.advance(-1);
 
+		// ---------------------------
+
 		if (Token.Keywords.includes(identStr)) {
-			return new Token(Token.Type.Keyword, identStr);
+			return new Token(Token.Type.Keyword, identStr)
+				.setPosition(leftPos, rightPos);
 
 		} else if (Token.Literals.includes(identStr)) {
-			return new Token(Token.Type.Literal, identStr);
+			return new Token(Token.Type.Literal, identStr)
+				.setPosition(leftPos, rightPos);
 		}
 
-		return new Token(Token.Type.Identifier, identStr);
+		return new Token(Token.Type.Identifier, identStr)
+			.setPosition(leftPos, rightPos);
 	}
 }
 
