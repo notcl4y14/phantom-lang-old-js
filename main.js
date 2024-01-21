@@ -1,7 +1,7 @@
 let fs = require("fs");
 let util = require("util");
 
-let valid_args = ["--lexer", "--parser", "--last-eval"];
+let valid_args = ["--lexer", "--parser", "--last-eval", "--env"];
 let param_args = [];
 
 // ---------------------------------------------------------------
@@ -68,6 +68,7 @@ let run = function(filename, code, flags) {
 	let Lexer = require("./lang/Lexer.js");
 	let Parser = require("./lang/Parser.js");
 	let Interpreter = require("./lang/Interpreter.js");
+	let Environment = require("./lang/Environment.js");
 
 	// Lexer
 	let lexer = new Lexer(filename, code);
@@ -90,11 +91,15 @@ let run = function(filename, code, flags) {
 	}
 
 	// Interpreter
+	let env = new Environment();
 	let interpreter = new Interpreter(filename);
-	let lastEval = interpreter.Primary(ast.value);
+	let lastEval = interpreter.Primary(ast.value, env);
+
+	if (lastEval.error) return console.log( lastEval.error.string() );
+	if (flags["--env"]) console.log(env);
 
 	if (flags["--last-eval"]) {
-		console.log(lastEval);
+		console.log(lastEval.value);
 	}
 }
 

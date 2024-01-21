@@ -61,7 +61,7 @@ let Lexer = class {
 
 		}
 
-		tokens.push ( new Token(Token.Type.EOF) );
+		tokens.push ( new Token(Token.Type.EOF).setPosition(this.pos.clone(), this.pos.clone()) );
 
 		return tokens;
 	}

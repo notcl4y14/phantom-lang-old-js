@@ -1,6 +1,7 @@
 let Node = class {
-	constructor(type, obj = {}) {
+	constructor(type, obj = {}, pos = []) {
 		this.type = type;
+		this.pos = pos;
 		for (let [key, value] of Object.entries(obj)) this[key] = value;
 	}
 
@@ -12,8 +13,11 @@ let Node = class {
 		Number: 1,
 		String: 2,
 		Literal: 3,
+		Identifier: 4,
 
-		BinaryExpr: 4,
+		VarDeclaration: 5,
+
+		BinaryExpr: 6,
 	}
 
 	// ---------------------------------------------------------------
