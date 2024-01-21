@@ -19,7 +19,7 @@ let Lexer = class {
 	// ---------------------------------------------------------------
 
 	at(range = 0) {
-		return range == 0
+		return (range == 0)
 			? this.getCode()[ this.getPos().index ]
 			: this.getCode().substr( this.getPos().index, range );
 	}
@@ -117,7 +117,7 @@ let Lexer = class {
 			return this.lexerize_Identifier();
 		}
 
-		return;
+		return ;
 	}
 
 	lexerize_Number() {

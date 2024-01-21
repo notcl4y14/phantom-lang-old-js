@@ -91,7 +91,7 @@ let run = function(filename, code, flags) {
 
 	// Interpreter
 	let interpreter = new Interpreter(filename);
-	let lastEval = interpreter.eval_Primary(ast.value);
+	let lastEval = interpreter.Primary(ast.value);
 
 	if (flags["--last-eval"]) {
 		console.log(lastEval);

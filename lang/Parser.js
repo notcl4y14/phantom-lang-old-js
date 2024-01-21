@@ -36,7 +36,7 @@ let Parser = class {
 		let program = new Node( Node.Type.Program, { body: [] } );
 
 		while (!this.isEOF()) {
-			let expr = res.register( this.parse_Expr() );
+			let expr = res.register( this.Expr() );
 			if (res.error) return res;
 
 			if (expr) program.body.push(expr);
@@ -47,35 +47,35 @@ let Parser = class {
 
 	// ---------------------------------------------------------------
 
-	parse_Expr() {
-		return this.parse_AddExpr();
+	Expr() {
+		return this.AddExpr();
 	}
 
 	// TODO: Add the ability to reuse the same binary expressions
-	parse_AddExpr() {
-		return this.parse_BinaryExpr("+-", this.parse_MultExpr);
+	AddExpr() {
+		return this.BinaryExpr("+-", this.MultExpr);
 	}
 
-	parse_MultExpr() {
-		return this.parse_BinaryExpr("*/%", this.parse_PowerExpr);
+	MultExpr() {
+		return this.BinaryExpr("*/%", this.PowerExpr);
 	}
 
-	parse_PowerExpr() {
-		return this.parse_BinaryExpr(["^", "**"], this.parse_PrimaryExpr);
+	PowerExpr() {
+		return this.BinaryExpr(["^", "**"], this.PrimaryExpr);
 	}
 
 	// ---------------------------------------------------------------
 
-	parse_BinaryExpr(operators, func, include = true) {
+	BinaryExpr(operators, func, include = true) {
 		let res = new Result(this.filename);
 
 		let left = res.register( func.call(this) );
 		if (res.error) return res;
 
 		while (
-			!this.isEOF()
-			&& this.at().matches(Token.Type.Operator, operators, include)
-		) {
+			!this.isEOF() &&
+			this.at().matches(Token.Type.Operator, operators, include))
+		{
 			let operator = this.advance().value;
 			let right = res.register( func.call(this) );
 			if (res.error) return res;
@@ -88,35 +88,31 @@ let Parser = class {
 
 	// ---------------------------------------------------------------
 
-	parse_PrimaryExpr() {
+	PrimaryExpr() {
 		let res = new Result(this.filename);
-
 		let token = this.advance();
-		let result = null;
 
 		switch (token.type) {
-			case Token.Type.Number: result = new Node( Node.Type.Number, { value: token.value } ); break;
-			case Token.Type.String: result = new Node( Node.Type.String, { value: token.value } ); break;
-			case Token.Type.Literal: result = new Node( Node.Type.Literal, { value: token.value } ); break;
-			// case Token.Type.Operator:
-				// result = res.register(this.parse_PrimaryOperator());
-				// if (res.error) return res;
-				// break;
+			case Token.Type.Number: return new Node( Node.Type.Number, { value: token.value } );
+			case Token.Type.String: return new Node( Node.Type.String, { value: token.value } );
+			case Token.Type.Literal: return new Node( Node.Type.Literal, { value: token.value } );
+			case Token.Type.Paren:
+				if (token.value == 1) break;
+
+				let result = res.register(this.Expr());
+				if (res.error) return res;
+
+				if (!this.at().matches(Token.Type.Paren, 1)) {
+					return res.failure(`Expected closing parenthesis`, this.at().getPos());
+				}
+
+				this.advance();
+
+				return res.success(result);
 		}
 
-		return ( result == null )
-			? res.failure(`Unexpected token '${token.value}'`, token.getPos())
-			: res.success(result);
+		return res.failure(`Unexpected token '${token.value}'`, token.getPos());
 	}
-
-	// parse_PrimaryOperator() {
-		// let res = new Result(this.filename);
-
-		// let token = this.at();
-		// if (token.value != "^") return res.success();
-
-		// return res.success(this.parse_BinaryExpr("^", this.parse_PrimaryExpr, false));
-	// }
 }
 
 module.exports = Parser;

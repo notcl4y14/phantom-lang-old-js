@@ -10,12 +10,12 @@ let Result = class {
 	// ---------------------------------------------------------------
 
 	register(res) {
-		if (res.error) {
-			this.error = res.error;
-			return res;
+		if (res instanceof Result) {
+			if (res.error) this.error = res.error;
+			return res.value;
 		}
 		
-		return res.value;
+		return res;
 	}
 
 	success(value) { this.value = value; return this; }

@@ -7,6 +7,11 @@
 // UNDER DEVELOPMENT VERSIONS
 // -----------------------------------------------
 
+// 21/1/2024
+- Removed the (**) operator and instead applied it to the power (^) operator
+- Added parenthesised expression
+- Fixed Result.register()
+
 // 10/1/2024
 - Created Result.js
 - Created Position.js
